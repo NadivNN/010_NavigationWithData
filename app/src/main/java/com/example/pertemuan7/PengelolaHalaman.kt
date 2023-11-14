@@ -25,6 +25,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.pertemuan7.CustomerDetailsScreen
 import com.example.pertemuan7.HalamanDua
 import com.example.pertemuan7.HalamanHome
 import com.example.pertemuan7.HalamanSatu
@@ -35,7 +36,8 @@ import com.example.pertemuan7.data.SumberData.flavor
 enum class PengelolaHalaman {
     Home,
     Rasa,
-    Summary
+    Summary,
+    CustomerDetails,
 }
 @Composable
 fun EsJumboAppBar(
@@ -78,20 +80,29 @@ fun EsJumboApp(
             composable(route = PengelolaHalaman.Home.name) {
                 HalamanHome(
                     onNextButtonClicked = {
-                        navController.navigate(PengelolaHalaman.Rasa.name)
-                    })
+                        navController.navigate(PengelolaHalaman.Rasa.name)})
+                        navController.navigate(PengelolaHalaman.CustomerDetails.name)
+
             }
+            composable(route = PengelolaHalaman.CustomerDetails.name) {
+                CustomerDetailsScreen(
+                    onConfirmButtonClicked = { nama, nomor, alamat ->
+                        viewModel.setCustomerDetails(nama, nomor, alamat)
+                        navController.navigate(PengelolaHalaman.Rasa.name)
+                    },
+                    onCancelButtonClicked = {
+                        navController.navigate(PengelolaHalaman.Home.name)
+                    },
+                )}
             composable(route = PengelolaHalaman.Rasa.name){
                 val context = LocalContext.current
                 HalamanSatu(
-                    flavor.map{id -> context.resources.getString(id)},
-                    {viewModel.setRasa(it)},
-                    {viewModel.setJumlah(it)},
-                    { navController.navigate(PengelolaHalaman.Summary.name)},
-                    { cancelOrderAndNavigateToHome(viewModel,navController
-                    )
-                    }
-                )
+                    pilihanRasa = flavor.map { id -> context.resources.getString(id) },
+                    onSelectionChanged = { viewModel.setRasa(it) },
+                    onConfirmButtonClicked = { viewModel.setJumlah(it) },
+                    onNextButtonClicked = { navController.navigate(PengelolaHalaman.Summary.name) },
+                    onCancelButtonClicked = { navController.navigate(PengelolaHalaman.CustomerDetails.name)
+                    })
             }
             composable(route = PengelolaHalaman.Summary.name){
                 HalamanDua(orderUIState = uiState,
