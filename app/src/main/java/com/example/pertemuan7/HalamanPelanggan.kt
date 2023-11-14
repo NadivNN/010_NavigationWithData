@@ -59,7 +59,14 @@ fun CustomerDetailsScreen(
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
         )
-
+        OutlinedTextField(
+            value = alamat,
+            onValueChange = { alamat = it },
+            label = { Text(text = "Alamat") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+        )
     }
 
 }
